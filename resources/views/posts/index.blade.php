@@ -12,7 +12,7 @@
         </div>
     </div>
     <div class="row">
-        @foreach ($posts as $post)
+        @forelse ($posts as $post)
         <div class="col-4 mt-3 mb-3">
             <div class="card h-100">
                 <div class="card-header">
@@ -23,11 +23,17 @@
                 </div>
                 <div class="card-footer d-flex justify-content-between">
                     Published on  {{$post->created_at->diffForHumans()}}
-                    <a class="btn btn-warning rounded-pill" href="">Edit</a>
+                    <a class="btn btn-warning rounded-pill" href="/post/{{$post->slug}}/edit">Edit</a>
                 </div>
             </div>
         </div>
-        @endforeach
+        @empty
+        <div class="col-md-6">
+            <div class="alert alert-info">
+                There are no post.
+            </div>
+        </div>
+        @endforelse
     </div>
 </div>
 

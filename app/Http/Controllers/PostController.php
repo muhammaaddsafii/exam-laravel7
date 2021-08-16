@@ -71,7 +71,7 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        return view('posts/edit', ['posts' => $post]);
     }
 
     /**
@@ -83,7 +83,16 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        //
+        $attr = request()->validate([
+            'title' => 'required',
+            'body' => 'required'
+        ]);
+
+        $post->update($attr);
+
+        session()->flash('success', 'The post has been updated');
+
+        return redirect()->to('post');
     }
 
     /**
