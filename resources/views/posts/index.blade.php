@@ -8,7 +8,7 @@
             <hr>
         </div>
         <div>
-            <a class="btn btn-outline-primary rounded-pill" href="">Create</a>
+            <a class="btn btn-outline-primary rounded-pill" href="/post/create">Create</a>
         </div>
     </div>
     <div class="row">

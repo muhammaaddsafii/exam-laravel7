@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Symfony\Contracts\Service\Attribute\Required;
 
 class PostController extends Controller
 {
@@ -25,7 +27,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('posts/create');
     }
 
     /**
@@ -36,7 +38,18 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $attr = $request->validate([
+            'title' => 'required',
+            'body' => 'required'
+        ]);
+
+        $attr['slug'] = Str::slug($request->title);
+
+        Post::create($attr);
+
+        session()->flash('success', 'The post has created');
+
+        return redirect()->to('/post');
     }
 
     /**

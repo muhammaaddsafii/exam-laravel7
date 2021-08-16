@@ -48,7 +48,10 @@
             </div>
         </nav>
 
-        @yield('content')
+        <div class="mt-3">
+            @include('layouts/sessionflash')
+            @yield('content')
+        </div>
 
         <!-- Optional JavaScript; choose one of the two! -->
 
