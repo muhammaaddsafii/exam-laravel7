@@ -10,7 +10,7 @@
                     EDIT POST : {{$posts->title}}
                 </div>
                 <div class="card-body">
-                    <form action="/post/{{$posts->slug}}/edit" method="POST">
+                    <form action="{{url('/post/'.$posts->slug.'/edit')}}" method="POST">
                         @method('patch')
                         @csrf
                         <div class="form-group">
@@ -32,7 +32,7 @@
                             @enderror
                         </div>
                         <br>
-                        <button type="submit" class="btn btn-primary">Update</button>
+                        <button type="submit" class="btn btn-primary rounded-pill">Update</button>
                     </form>
                 </div>
             </div>

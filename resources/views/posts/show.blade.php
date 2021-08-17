@@ -31,7 +31,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-warning rounded-pill" data-bs-dismiss="modal">Cancel</button>
-                            <form action="/post/{{$posts->slug}}/delete" method="POST">
+                            <form action="{{url('/post/'.$posts->slug.'/delete')}}" method="POST">
                                 @method('delete')
                                 @csrf
                                 <button type="submit" class="btn btn-danger rounded-pill">Delete</button>

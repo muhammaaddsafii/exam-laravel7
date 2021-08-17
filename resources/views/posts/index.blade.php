@@ -8,7 +8,7 @@
             <hr>
         </div>
         <div>
-            <a class="btn btn-outline-primary rounded-pill" href="/post/create">Create</a>
+            <a class="btn btn-outline-primary rounded-pill" href="{{url('/post/create')}}">Create</a>
         </div>
     </div>
     <div class="row">
@@ -20,11 +20,11 @@
                 </div>
                 <div class="card-body">
                     {{Str::limit($post->body, 40, '...')}}
-                    <a class="text-decoration-none" href="/post/{{$post->slug}}">Read more ...</a>
+                    <a class="text-decoration-none" href="{{url('/post/'.$post->slug)}}">Read more ...</a>
                 </div>
                 <div class="card-footer d-flex justify-content-between">
                     Published on  {{$post->created_at->diffForHumans()}}
-                    <a class="btn btn-warning rounded-pill" href="/post/{{$post->slug}}/edit">Edit</a>
+                    <a class="btn btn-warning rounded-pill" href="{{url('/post/'.$post->slug.'/edit')}}">Edit</a>
                 </div>
             </div>
         </div>

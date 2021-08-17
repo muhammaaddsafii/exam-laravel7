@@ -30,19 +30,19 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link {{request()->is('/') ? 'active' : ''}}" aria-current="page" href="/">Home</a>
+                    <a class="nav-link {{request()->is('/') ? 'active' : ''}}" aria-current="page" href="{{url('/')}}">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{request()->is('about') ? 'active' : ''}}" aria-current="page" href="/about">About</a>
+                    <a class="nav-link {{request()->is('about') ? 'active' : ''}}" aria-current="page" href="{{url('/about')}}">About</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{request()->is('post') ? 'active' : ''}}" aria-current="page" href="/post">Post</a>
+                    <a class="nav-link {{request()->is('post') ? 'active' : ''}}" aria-current="page" href="{{url('/post')}}">Post</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{request()->is('contact') ? 'active' : ''}}" aria-current="page" href="/contact">Contact</a>
+                    <a class="nav-link {{request()->is('contact') ? 'active' : ''}}" aria-current="page" href="{{url('/contact')}}">Contact</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{request()->is('login') ? 'active' : ''}}" aria-current="page" href="/login">Login</a>
+                    <a class="nav-link {{request()->is('login') ? 'active' : ''}}" aria-current="page" href="{{url('/login')}}">Login</a>
                 </li>
                 </ul>
             </div>

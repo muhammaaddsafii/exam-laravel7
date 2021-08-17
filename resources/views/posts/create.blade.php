@@ -10,7 +10,7 @@
                     NEW POST
                 </div>
                 <div class="card-body">
-                    <form action="/post/store" method="POST">
+                    <form action="{{url('/post/store')}}" method="POST">
                         @csrf
                         <div class="form-group">
                             <label for="title">Title</label>
