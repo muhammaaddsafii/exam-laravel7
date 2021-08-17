@@ -20,6 +20,7 @@
                 </div>
                 <div class="card-body">
                     {{Str::limit($post->body, 40, '...')}}
+                    <a class="text-decoration-none" href="/post/{{$post->slug}}">Read more ...</a>
                 </div>
                 <div class="card-footer d-flex justify-content-between">
                     Published on  {{$post->created_at->diffForHumans()}}
