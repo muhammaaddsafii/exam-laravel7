@@ -9,6 +9,15 @@
                     {{$posts->title}}
                 </div>
                 <div class="card-body">
+                    <div class="text-secondary d-flex justify-content-between">
+                        <div>
+                            Category : {{$posts->category->nama}}
+                        </div>
+                        <div>
+                            {{$posts->created_at->format("d F, Y")}}
+                        </div>
+                    </div>
+                    <hr>
                     {{$posts->body}}
                 </div>
                 <div class="card-footer d-flex justify-content-between">
