@@ -19,6 +19,8 @@ Route::get('/post/{post:slug}/edit', 'PostController@edit');
 Route::patch('/post/{post:slug}/edit', 'PostController@update');
 Route::delete('/post/{post:slug}/delete', 'PostController@destroy');
 
+Route::get('/post/categories/{category:slug}', 'CategoryController@show');
+
 //route untuk contact
 Route::get('/contact', 'ContactController@index');
 

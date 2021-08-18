@@ -4,7 +4,11 @@
 <div class="container mt-3">
     <div class="d-flex justify-content-between">
         <div>
-            <h4>All Post</h4>
+            @isset($category)
+                <h4>Category : {{$category->nama}} </h4> 
+                @else
+                <h4>All Post</h4>
+            @endisset
             <hr>
         </div>
         <div>
@@ -15,12 +19,17 @@
         @forelse ($posts as $post)
         <div class="col-4 mt-3 mb-3">
             <div class="card h-100">
-                <div class="card-header">
-                    {{$post->title}}
+                <div class="card-header d-flex justify-content-between">
+                    <div>
+                        {{$post->title}}
+                    </div>
+                    <div>
+                        <a class="text-decoration-none" href="/post/categories/{{$post->category->slug}}">{{$post->category->nama}}</a>
+                    </div>
                 </div>
                 <div class="card-body">
-                    {{Str::limit($post->body, 40, '...')}}
-                    <a class="text-decoration-none" href="{{url('/post/'.$post->slug)}}">Read more ...</a>
+                    {{Str::limit($post->body, 50, '...')}}
+                    <a class="text-decoration-none" href="{{url('/post/'.$post->slug)}}"> <br> Read more ...</a>
                 </div>
                 <div class="card-footer d-flex justify-content-between">
                     Published on  {{$post->created_at->diffForHumans()}}

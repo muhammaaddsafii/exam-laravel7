@@ -11,7 +11,7 @@
                 <div class="card-body">
                     <div class="text-secondary d-flex justify-content-between">
                         <div>
-                            Category : {{$posts->category->nama}}
+                            Category : <a class="text-decoration-none" href="/post/categories/{{$posts->category->slug}}">{{$posts->category->nama}}</a> 
                         </div>
                         <div>
                             {{$posts->created_at->format("d F, Y")}}
