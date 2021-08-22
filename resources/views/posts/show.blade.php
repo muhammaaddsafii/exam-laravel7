@@ -14,6 +14,12 @@
                             Category : <a class="text-decoration-none" href="/post/categories/{{$posts->category->slug}}">{{$posts->category->nama}}</a> 
                         </div>
                         <div>
+                            Tags : 
+                            @foreach ($posts->tags as $tag)
+                            <a href="#" class="text-decoration-none">{{$tag->name}}</a>
+                            @endforeach
+                        </div>
+                        <div>
                             {{$posts->created_at->format("d F, Y")}}
                         </div>
                     </div>
