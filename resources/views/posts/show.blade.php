@@ -16,7 +16,7 @@
                         <div>
                             Tags : 
                             @foreach ($posts->tags as $tag)
-                            <a href="#" class="text-decoration-none">{{$tag->name}}</a>
+                            <a href="{{url('/post/tags/'.$tag->slug)}}" class="text-decoration-none">{{$tag->name}}</a>
                             @endforeach
                         </div>
                         <div>

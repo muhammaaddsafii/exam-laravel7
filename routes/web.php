@@ -21,6 +21,8 @@ Route::delete('/post/{post:slug}/delete', 'PostController@destroy');
 
 Route::get('/post/categories/{category:slug}', 'CategoryController@show');
 
+Route::get('/post/tags/{tag:slug}', 'TagController@show');
+
 //route untuk contact
 Route::get('/contact', 'ContactController@index');
 
