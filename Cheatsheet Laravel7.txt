@@ -1,0 +1,255 @@
+Cheatsheet Laravel7
+
+1. MEMBUAT CLASS ACTIVE 
+	{{request()->is('/') ? 'active' : ''}}
+	{{request()->is('about') ? 'active' : ''}}
+
+2. MEMBUAT MIGRATION
+php artisan make:migration create_<namatablejamak>_table
+php artisan make:migration add_<namafield>_to_<namatabel>_table
+
+3. INSERT TABLE DI MIGRATION
+	$table->id();
+	$table->string('title', 191);
+	$table->string('slug', 191);
+	$table->text('body');
+	$table->timestamps();
+
+4. MEMBUAT FACTORY
+	(1) php artisan make:factory <NamaFactory>
+	(2) php artisan tinker
+	(3) factory ('App\User', 20)->create()
+	(4) exit
+
+5. INSERT DATA DI FACTORY
+	'title' => $faker->sentence(),
+	'slug' => Str::slug($faker->sentence()),
+	'body' => $faker->paragraph(10),
+
+6. AMBIL DATA DARI DATABASE + PAGINATE
+	$posts = Post::orderBy('created_at', 'DESC')->Paginate(5);
+
+7. MENAMPILKAN TIME STAMP BAGUS
+	Published on  {{$post->created_at->diffForHumans()}}
+
+8. MEMBATASI JUMLAH STRING YANG DITAMPILKAN
+	{{Str::limit($post->body, 40, '...')}}
+
+9. KETIKA INPUT DATA, KASIH @csrf untuk formnya
+
+10. UNTUK VALIDASI FORM, MENYIMPAN DATA, DAN SESSION FLASH
+	$attr = $request->validate([
+            'title' => 'required',
+            'body' => 'required'
+        ]);
+
+        $attr['slug'] = Str::slug($request->title);
+
+        Post::create($attr);
+
+        session()->flash('success', 'The post has created');
+        // session()->flash('error', 'The post has failed to create');
+
+        return redirect()->to('posts');
+
+11. JANGAN LUPA FILLABLE DI MODEL
+	protected $fillable = ['title', 'body'];
+
+12. MEMBUAT SESSION FLASH
+	session()->flash('success', 'The post has created');
+
+	//taruh layouts, kemudian include kan dimaster
+	@if (session()->has('success'))
+	<div class="container">
+    		<div class="row">
+        	<div class="col-md-6">
+            	<div class="alert alert-success">
+                	{{session()->get('success')}}
+            	</div>
+        	</div>
+    		</div>
+	</div>
+	@endif
+
+13. @forelse UNTUK GANTI @foreach
+	@forelse
+
+	@empty
+        <div class="col-md-6">
+            <div class="alert alert-info">
+                There are no post.
+            </div>
+        </div>
+
+        @endforelse
+
+14. UNTUK VALIDASI DI FORM (JIKA FORM DIBIARKAN KOSONG)
+	@error('body')
+		<div class="mt-2 text-danger">
+			{{$message}}
+                </div>
+        @enderror
+
+
+15. EDIT (MENAMPILKAN ISI FORM LAMA)
+	value="{{ old('title') ?? $post->title }}"
+
+16. EDIT (MENAMBAHKAN METHOD PATCH)
+	<form action="/posts/{{$post->slug}}/edit" method="POST">
+        @method('patch')
+        @csrf
+
+17. MENYIMPAN DATA SETELAH DIEDIT
+	$attr = request()->validate([
+            'title' => 'required',
+            'body' => 'required'
+        ]);
+
+        $post->update($attr);
+
+        session()->flash('success', 'The post has been updated');
+
+        return redirect()->to('post');
+
+18. REFACTORING (CARA PERTAMA)
+Jika terdapat banyak duplicate fungsi, misal :
+$attr = $request->validate([
+        'title' => 'required',
+        'body' => 'required'
+]);
+
+buat saja sebuah fungsi untuk kode diatas, jadinya seperti ini :
+public function validaterequest()
+    {
+        return request()->validate([
+            'title' => 'required',
+            'body' => 'required'
+        ]);
+    }
+
+kemudian panggil fungsinya :
+$attr = $this->validaterequest();
+
+19. REFACTORING (CARA KEDUA) MEMAKAI REQUEST
+php artisan make:request <NamaRequest>
+authorize ubah ke 'true'.
+masukkan fungsi di rules.
+Beri Parameter di fungsinya :
+public function store(PostRequest $request)
+    {
+        $sembarang = $request->all();
+        
+    }
+
+20. MENGHAPUS DATA
+buat route :
+Route::delete('..', '...Controller@destroy');
+
+buat form :
+	<form action="/posts/{{$post->slug}}/delete" method="POST">
+        	@method('delete')
+       		@csrf
+        	<button href="" class="btn btn-danger" type="submit">Delete</button>
+    	</form>
+
+fungsi :
+public function destroy(Post $posts)
+    {
+        $posts->delete();
+        return redirect('posts');
+    }
+
+21. URL
+href="{{url('/post/'.$post->slug)}}"
+
+22. RELASI ONE TO MANY 
+	1) Buat model dan migration(table)
+	2) Setup relasi (setiap kategori memiliki banyak post).
+	   Di model Category :
+		public function posts()
+    		{
+        		return $this->hasMany(Post::class);
+    		}
+	3) di model Post :
+		public function category()
+   		{
+       			return $this->hasOne(Category::class);
+    		}
+		
+	catatan : return $this->hasOne(Category::class); bisa diganti dengan return $this->belongsTo(Category::class);
+	4) Tambahkan field category_id di table posts **INI UNTUK RELASI** pakai migration yaaa
+	5) untuk random data : 
+		'category_id' => rand(1, 3),
+	6) panggil data dari relasi : {{$post->category->name}}
+		category merupakan fungsi.
+
+23. FILTER KATEGORI YANG DIPILIH
+	1) Buat route untuk kategori + buat controllernya
+	2) di controller :
+		public function show(Category $category)
+    		{
+        		$posts = $category->posts()->paginate(6);				//sebenernya $posts = $category->posts; (ini yang direlasikan) cuman karena pagination, jadi posts(). posts() merupakan fungsi di point 22
+        		return view('posts/index', ['posts' => $posts]);
+    		}
+	3) untuk cek:
+		@isset($category)
+            		<h4>Category : {{$category->name}}</h4>                
+            	@else
+            		<h4>All Post</h4>
+            	@endisset
+
+24. MANY TO MANY RELATIONSHIP
+    Misalnya : kita akan merelasikan post dengan tag. Dimana setiap post memiliki banyak tag, dan setiap tag memiliki banyak post. 
+	1) buat table posts
+	2) buat table tags
+	3) buat table untuk menghubungkan keduanya, yang berisi posts_id dan tags_id.
+	4) setup relasi di modelnya :
+	--- di model Tag ---
+	public function posts()
+    	{
+        	return $this->belongsToMany(Post::class);
+    	}
+
+	--- di model Post ---
+	public function tags()
+    	{
+        	return $this->belongsToMany(Tag::class);
+    	}
+	5) panggil datanya 
+
+25. CEK ISSET
+	    @isset($category)
+            <h4>Category : {{$category->nama}}</h4>
+            @else          
+            @endisset
+
+            @isset($tag)
+            <h4>Tags : {{$tag->name}}</h4>
+            @else
+            @endisset
+            
+            @if(!isset($category) && !isset($tag))
+            <h4>All Post</h4>            
+            @endif
+
+26. MENYISIPKAN TAG DI FORM (CREATE : ATTACH, UPDATE : SYNC, DELETE : DETACH)
+	CREATE
+	1) Buat tampilan form untuk menyisipkan datanya
+	2) Ambil datanya lewat controller
+		$attr['category_id'] = request('category');     //untuk menyisipkan category
+		
+		$post = Post::create($attr);
+
+	        $post->tags()->attach(request('tags'));     //untuk menyisipkan tags (post->tags(), merupakan relasi. tags() diambil dari fungsi di Model) 
+	3) Jangan lupa fillablenya.
+	
+	UPDATE
+	4) kalo create 'attach', kalo update pake 'sync'. Di controller method update
+		$attr['category_id'] = request('category');
+
+		$post->tags()->sync(request('tags'));
+
+	DELETE
+	5) untuk menghapus pake detach(). Di controller method destroy
+		$post->tags()->detach();
+		$posts->delete();
