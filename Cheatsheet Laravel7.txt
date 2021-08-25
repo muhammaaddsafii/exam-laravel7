@@ -253,3 +253,27 @@ href="{{url('/post/'.$post->slug)}}"
 	5) untuk menghapus pake detach(). Di controller method destroy
 		$post->tags()->detach();
 		$posts->delete();
+
+27. AUTHENTIKASI
+	1) untuk memulai authentikasi (install package ui) : composer require laravel/ui --dev
+	2) untuk memasang auth scaffolding : php artisan ui bootstrap --auth
+	   * bootstrap bisa diganti dengan vue atau react
+	3) lakukan : npm install && npm run dev
+
+28. MEMASANG AUTH DI PROJECT LAMA
+	1) Lakukan langkah di nomer.27
+	2) untuk akses home route, App/Providers/RouteServiceProvider.php
+		public const HOME = '/';
+	3) - (optional) untuk mengubah komponen warna bisa ke : resources/sass/_variables.scss
+		> npm run watch (melihat apa yang dirubah di saas, dan akan dicompile di public/css)
+	   - setelah isi di folder css dan js dihapus lakukan : > npm run watch lagi
+	4) untuk menamai route : Route::get('/posts', 'PostController@index')->name('posts/index');
+	5) untuk memanggil nama routenya : href="{{route('posts/index')}}"
+
+29. MEMAINKAN AUTH MIDDLEWARE
+	1) Buat function __construct() di Controllernya, buat seperti ini :
+		public function __construct()
+    		{
+        		$this->middleware('auth');
+    		}
+
