@@ -1,15 +1,14 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-//route untuk home
-Route::get('/', 'HomeController@index');
 
 //route untuk about
-Route::get('/about', 'AboutController@index');
+Route::get('/about', 'AboutController@index')->name('about');
 
 //route untuk post
-Route::get('/post', 'PostController@index');
+Route::get('/all-post', 'PostController@index')->name('post');
 
 Route::get('/post/create', 'PostController@create');
 Route::post('/post/store', 'PostController@store');
@@ -24,7 +23,8 @@ Route::get('/post/categories/{category:slug}', 'CategoryController@show');
 Route::get('/post/tags/{tag:slug}', 'TagController@show');
 
 //route untuk contact
-Route::get('/contact', 'ContactController@index');
+Route::get('/contact', 'ContactController@index')->name('contact');
 
-//route untuk login
-Route::get('/login', 'LoginController@index');
+Auth::routes();
+
+Route::get('/', 'HomeController@index')->name('home');
