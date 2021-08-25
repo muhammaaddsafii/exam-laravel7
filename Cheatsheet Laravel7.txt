@@ -271,9 +271,49 @@ href="{{url('/post/'.$post->slug)}}"
 	5) untuk memanggil nama routenya : href="{{route('posts/index')}}"
 
 29. MEMAINKAN AUTH MIDDLEWARE
-	1) Buat function __construct() di Controllernya, buat seperti ini :
+	1) Membuat middleware di controller :
+
 		public function __construct()
     		{
         		$this->middleware('auth');
     		}
+
+	2) Membuat pengecualian :
+		public function __construct()
+    		{
+        		$this->middleware('auth')->except(['index', 'show']);		//'index' diambil dari nama method/function
+    		}
+
+	3) Membuat pengkondisian :
+	     1) @if(Auth::check())
+            		<a class="btn btn-primary rounded-pill" href="/post/create">Create</a>
+            	@endif
+
+		// jika belum autentikasi, create tidak akan ditampilkan
+	
+ 	     2) @if(Auth::check())
+                	<a class="btn btn-primary rounded-pill" href="/post/create">Create</a>
+            	@else
+                	<a class="btn btn-primary rounded-pill" href="/login">Login to Create</a>
+           	@endif
+
+	     3) Bisa juga :
+		@auth
+                	<a href="/post/{{$post->slug}}/edit" class="btn btn-warning rounded-pill">Edit</a>
+                @endauth
+
+	4) Membuat middleware di route
+		**tambahkan** : ->middleware('auth')
+		Route::get('/post/create', 'PostController@create')->middleware('auth')->name('post/create');
+
+	5) Mengelompokkan dengan route:group
+		Rooute::middleware('auth')->group(function(){
+
+		
+				// taruh routenya disini
+	
+				// untuk pengecualian, tambahi ->withoutMiddleware('auth');
+				// Route::get('/post/create', 'PostController@create')->name('post/create')->withoutMiddleware('auth');
+		
+		});
 
