@@ -307,7 +307,7 @@ href="{{url('/post/'.$post->slug)}}"
 		Route::get('/post/create', 'PostController@create')->middleware('auth')->name('post/create');
 
 	5) Mengelompokkan dengan route:group
-		Rooute::middleware('auth')->group(function(){
+		Route::middleware('auth')->group(function(){
 
 		
 				// taruh routenya disini
