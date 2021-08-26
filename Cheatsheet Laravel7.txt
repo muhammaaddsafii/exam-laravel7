@@ -317,3 +317,84 @@ href="{{url('/post/'.$post->slug)}}"
 		
 		});
 
+30. MEMBUAT DATA DEFAULT PAKE SEEDER
+	
+	1) Buat seeder terlebih dahulu.
+		
+		php artisan make:seed CategoriesTableSeeder		// CategoriesTableSeeder merupakan <nama seed>
+		
+		php artisan make:seed TagsTableSeeder
+
+		// file seed akan masuk di folder database/seeds/CategoriesTableSeeder.php
+		// file seed akan masuk di folder database/seeds/TagsTableSeeder.php
+
+	2) Di seeder, untuk membuat file default :
+		DI FILE CategoriesTableSeeder :
+
+		public function run()
+    		{
+        		$categories = collect(['Framework', 'Code']);
+        		$categories->each(function ($c) {
+            		\App\Category::create([
+                	'name' => $c,
+                	'slug' => \Str::slug($c),
+            			]);
+        		});
+    		}
+
+		DI FILE TagsTableSeeder :
+
+		public function run()
+    		{
+			$tags = collect(['Laravel', 'Foundation', 'Slim', 'Bug', 'Help']);
+        		$tags->each(function ($c) {
+            		\App\Tag::create([								// ini untuk auto seed data di tag
+                	'name' => $c,
+                	'slug' => \Str::slug($c),
+            			]);
+        		});
+    		}
+
+		//each() function hanya bisa menerima collection, maka arraynya perlu ditambah collect
+
+	3) Kemudian di folder database/seeds/DatabaseSeeder.php
+		public function run()
+    		{
+        		$this->call(CategoriesTableSeeder::class);
+        		$this->call(TagsTableSeeder::class);
+    		}
+
+	4) Jalankan Seedernya :
+		php artisan db:seed
+
+		
+		// Membuat User Bawaan di UsersTableSeeder
+		public function run()
+    		{
+        			\App\User::create([
+            			'name' => 'The Rotten Bug',
+            			'username' => 'therottenbug',
+            			'email' => 'therottenbug.com',
+            			'password' => bcrypt('password')
+       			]);
+    		}
+
+31) MEMBUAT COMMAND
+	1) Membuat command sendiri
+		php artisan make:command RefreshDatabaseCommand		// RefreshDatabaseCommand merupakan <nama command>
+
+		// filenya ada di folder App/Console/Commands/RefreshDatabaseCommand.php
+
+	2) Custom command
+		    protected $signature = 'refresh:database';		//refresh merupakan keywordnya, dan database merupakan actionnya
+	
+	3) Untuk eksekusinya ada di function handle()
+		public function handle()
+    		{
+        		$this->call('migrate:refresh');
+
+		        $this->call('db:seed');						// ini nuntuk ngerun DatabaseSeeder.php
+        
+        		$this->info('All database has been refreshed and seeded');
+    		}
+
