@@ -29,10 +29,11 @@
                 <div class="card-footer d-flex justify-content-between">
                     Published on  {{$posts->created_at->diffForHumans()}}
                     <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-danger rounded-pill" data-bs-toggle="modal" data-bs-target="#myModal">
-                        Delete
-                    </button>
-                    
+                    @auth
+                        <button type="button" class="btn btn-danger rounded-pill" data-bs-toggle="modal" data-bs-target="#myModal">
+                            Delete
+                        </button>
+                    @endauth                    
                     <!-- Modal -->
                     <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog">

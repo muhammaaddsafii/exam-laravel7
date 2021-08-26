@@ -17,9 +17,15 @@
             @endif    
             <hr>
         </div>
-        <div>
-            <a class="btn btn-outline-primary rounded-pill" href="{{url('/post/create')}}">Create</a>
-        </div>
+        @if(Auth::check())
+            <div>
+                <a class="btn btn-outline-primary rounded-pill" href="{{url('/post/create')}}">Create</a>
+            </div>
+        @else
+            <div>
+                <a class="btn btn-outline-primary rounded-pill" href="{{url('/login')}}">Login to create</a>
+            </div>
+        @endif
     </div>
     <div class="row">
         @forelse ($posts as $post)
@@ -37,10 +43,12 @@
                     {{Str::limit($post->body, 50, '...')}}
                     <a class="text-decoration-none" href="{{url('/post/'.$post->slug)}}"> <br> Read more ...</a>
                 </div>
-                <div class="card-footer d-flex justify-content-between">
-                    Published on  {{$post->created_at->diffForHumans()}}
-                    <a class="btn btn-warning rounded-pill" href="{{url('/post/'.$post->slug.'/edit')}}">Edit</a>
-                </div>
+                @auth
+                    <div class="card-footer d-flex justify-content-between">
+                        Published on  {{$post->created_at->diffForHumans()}}
+                        <a class="btn btn-warning rounded-pill" href="{{url('/post/'.$post->slug.'/edit')}}">Edit</a>
+                    </div>
+                @endauth
             </div>
         </div>
         @empty
