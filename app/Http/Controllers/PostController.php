@@ -56,12 +56,12 @@ class PostController extends Controller
         $attr['slug'] = Str::slug($request->title);
         $attr['category_id'] = request('category');
 
-        $posts = Post::create($attr);
+        $posts = auth()->user()->posts()->create($attr);
         $posts->tags()->attach(request('tags'));
 
         session()->flash('success', 'The post has created');
 
-        return redirect()->to('/post');
+        return redirect()->route('post');
     }
 
     /**
@@ -126,10 +126,16 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        $post->tags()->detach();
-        $post->delete();
 
-        session()->flash('deleted', 'Data has been deleted');
-        return redirect('post');
+        if (auth()->user()->is($post->author)) {
+            $post->tags()->detach();
+            $post->delete();
+
+            session()->flash('deleted', 'Data has been deleted');
+            return redirect()->route('post');
+        } else {
+            session()->flash('deleted', 'You cannot delete the post, because it is not yours !');
+            return redirect()->route('post');
+        }
     }
 }

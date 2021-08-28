@@ -11,7 +11,7 @@
                 <div class="card-body">
                     <div class="text-secondary d-flex justify-content-between">
                         <div>
-                            Category : <a class="text-decoration-none" href="/post/categories/{{$posts->category->slug}}">{{$posts->category->nama}}</a> 
+                            Category : <a class="text-decoration-none" href="/post/categories/{{$posts->category->slug}}">{{$posts->category->name}}</a> 
                         </div>
                         <div>
                             Tags : 
@@ -28,6 +28,10 @@
                 </div>
                 <div class="card-footer d-flex justify-content-between">
                     Published on  {{$posts->created_at->diffForHumans()}}
+
+                    <div>
+                        Author : {{$posts->author->name}}
+                    </div>
                     <!-- Button trigger modal -->
                     @auth
                         <button type="button" class="btn btn-danger rounded-pill" data-bs-toggle="modal" data-bs-target="#myModal">
