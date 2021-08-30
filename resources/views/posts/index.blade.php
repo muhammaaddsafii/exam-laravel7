@@ -43,12 +43,12 @@
                     {{Str::limit($post->body, 50, '...')}}
                     <a class="text-decoration-none" href="{{url('/post/'.$post->slug)}}"> <br> Read more ...</a>
                 </div>
-                @auth
                     <div class="card-footer d-flex justify-content-between">
                         Published on  {{$post->created_at->diffForHumans()}}
+                        @can('update', $post)
                         <a class="btn btn-warning rounded-pill" href="{{url('/post/'.$post->slug.'/edit')}}">Edit</a>
+                        @endcan
                     </div>
-                @endauth
             </div>
         </div>
         @empty

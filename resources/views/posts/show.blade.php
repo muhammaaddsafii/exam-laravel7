@@ -33,11 +33,11 @@
                         Author : {{$posts->author->name}}
                     </div>
                     <!-- Button trigger modal -->
-                    @auth
+                    @can('delete', $posts)
                         <button type="button" class="btn btn-danger rounded-pill" data-bs-toggle="modal" data-bs-target="#myModal">
                             Delete
                         </button>
-                    @endauth                    
+                    @endcan                 
                     <!-- Modal -->
                     <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog">

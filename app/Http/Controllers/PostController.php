@@ -102,6 +102,7 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
+        $this->authorize('update', $post);
         $attr = request()->validate([
             'title' => 'required',
             'body' => 'required',
@@ -126,16 +127,12 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+        $this->authorize('delete', $post);
 
-        if (auth()->user()->is($post->author)) {
-            $post->tags()->detach();
-            $post->delete();
+        $post->tags()->detach();
+        $post->delete();
 
-            session()->flash('deleted', 'Data has been deleted');
-            return redirect()->route('post');
-        } else {
-            session()->flash('deleted', 'You cannot delete the post, because it is not yours !');
-            return redirect()->route('post');
-        }
+        session()->flash('deleted', 'Data has been deleted');
+        return redirect()->route('post');
     }
 }
