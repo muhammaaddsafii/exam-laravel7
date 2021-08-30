@@ -10,12 +10,20 @@
                     NEW POST
                 </div>
                 <div class="card-body">
-                    <form action="{{url('/post/store')}}" method="POST">
+                    <form action="{{url('/post/store')}}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="form-group">
                             <label for="title">Title</label>
                             <input type="text" name="title" id="title" class="form-control">
                             @error('title')
+                            <div class="mt-2 text-danger">
+                                {{$message}}
+                            </div>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <input type="file" name="thumbnail" id="thumbnail">
+                            @error('thumbnail')
                             <div class="mt-2 text-danger">
                                 {{$message}}
                             </div>

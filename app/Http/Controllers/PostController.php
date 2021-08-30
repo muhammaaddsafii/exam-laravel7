@@ -46,15 +46,27 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'thumbnail' => 'image | mimes:jpeg, png, jpg, svg| max:2048'
+        ]);
+
+        $thumbnail = request()->file('thumbnail') ? request()->file('thumbnail')->store("images/photos") : null;
+
         $attr = $request->validate([
             'title' => 'required',
             'body' => 'required',
             'category' => 'required',
             'tags' => 'array|required'
         ]);
+        $thumbnail = request()->file('thumbnail');
 
-        $attr['slug'] = Str::slug($request->title);
+        $slug = Str::slug($request->title);
+        $attr['slug'] = $slug;
         $attr['category_id'] = request('category');
+
+        $thumbnailUrl = $thumbnail->store("images/photos");
+        $attr['thumbnail'] = $thumbnailUrl;
+
 
         $posts = auth()->user()->posts()->create($attr);
         $posts->tags()->attach(request('tags'));
@@ -103,6 +115,11 @@ class PostController extends Controller
     public function update(Request $request, Post $post)
     {
         $this->authorize('update', $post);
+
+        $request->validate([
+            'thumbnail' => 'image | mimes:jpeg, png, jpg, svg| max:2048'
+        ]);
+
         $attr = request()->validate([
             'title' => 'required',
             'body' => 'required',
@@ -110,13 +127,23 @@ class PostController extends Controller
             'tags' => 'array|required'
         ]);
 
+        if (request()->file('thumbnail')) {
+            \Storage::delete($post->thumbnail);
+            $thumbnail = request()->file('thumbnail');
+            $thumbnailUrl = $thumbnail->store("images/photos");
+        } else {
+            $post->thumbnail;
+        }
+
+        $attr['thumbnail'] = $thumbnailUrl;
+
         $att['category_id'] = request('category');
         $post->tags()->sync(request('tags'));
         $post->update($attr);
 
         session()->flash('success', 'The post has been updated');
 
-        return redirect()->to('post');
+        return redirect()->route('post');
     }
 
     /**
@@ -128,6 +155,8 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         $this->authorize('delete', $post);
+
+        \Storage::delete($post->thumbnail);
 
         $post->tags()->detach();
         $post->delete();

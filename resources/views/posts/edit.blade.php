@@ -10,7 +10,7 @@
                     EDIT POST : {{$posts->title}}
                 </div>
                 <div class="card-body">
-                    <form action="{{url('/post/'.$posts->slug.'/edit')}}" method="POST">
+                    <form action="{{url('/post/'.$posts->slug.'/edit')}}" method="POST" enctype="multipart/form-data">
                         @method('patch')
                         @csrf
                         <div class="form-group">
@@ -23,11 +23,19 @@
                             @enderror
                         </div>
                         <div class="form-group">
+                            <input type="file" name="thumbnail" id="thumbnail">
+                            @error('thumbnail')
+                            <div class="mt-2 text-danger">
+                                {{$message}}
+                            </div>
+                            @enderror
+                        </div>
+                        <div class="form-group">
                             <label for="category">Category</label>
                             <select name="category" id="category" class="form-control">
                                 <option value="" selected disabled>Chose Category :</option>
                                     @foreach ($categories as $category)
-                                <option {{$category->id == $posts->category_id ? 'selected' : ''}} value="{{$category->id}}">{{$category->nama}}</option>
+                                <option {{$category->id == $posts->category_id ? 'selected' : ''}} value="{{$category->id}}">{{$category->name}}</option>
                                 @endforeach
                             </select>
                             @error('category')

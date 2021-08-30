@@ -36,10 +36,11 @@
                         {{$post->title}}
                     </div>
                     <div>
-                        <a class="text-decoration-none" href="/post/categories/{{$post->category->slug}}">{{$post->category->nama}}</a>
+                        <a class="text-decoration-none" href="/post/categories/{{$post->category->slug}}">{{$post->category->name}}</a>
                     </div>
                 </div>
                 <div class="card-body">
+                    <img class="card-img-top" src="{{ $post->takeImage }}" alt="">
                     {{Str::limit($post->body, 50, '...')}}
                     <a class="text-decoration-none" href="{{url('/post/'.$post->slug)}}"> <br> Read more ...</a>
                 </div>
