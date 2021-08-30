@@ -398,3 +398,94 @@ href="{{url('/post/'.$post->slug)}}"
         		$this->info('All database has been refreshed and seeded');
     		}
 
+32) DEFAULT LOGIN MENGGUNAKAN USERNAME
+	1) Masuk ke folder App/Http/Controllers/Auth/LoginController.php
+	2) Tambah fungsi baru :
+		public function username()
+    		{
+        		return 'username';
+    		}
+
+
+33) BASIC AUTHORISASI DALAM LARAVEL
+	1) Buat relasi antara post dan user (setiap user bisa memiliki banyak post, dan setiap post dibuat satu user/author)
+	2) di method store() di Controller, lakukan :
+		$attr['user_id'] = auth()->id();		// tambahi auth()->id(); untuk ngecek id siapa yang sedang login, biar nanti postnya tau siapa authornya
+	3) Jangan lupa fillable
+
+	***** TAPI, CARA INI AKAN MENYEBABKAN MASS ASSIGNMENT *****
+	INSTEAD OF DOING THE WAY ABOVE, JUST DO THIS !!!
+
+	1) Buat relasi antara post dan user (setiap user bisa memiliki banyak post, dan setiap post dibuat satu user/author)
+	2) di method store() di Controller, ketika ingin membuat post baru,  lakukan :
+		$post = auth()->user()->posts()->create($attr);
+
+		// $post : variable untuk menyimpan data  yang akan dibuat
+		// auth()->user()->posts() : function untuk merelasikan		//auth()->user() satu kesatuan
+		// $attr : variable untuk mendapatkan data inputan
+	3) Tampilkan datanya (author)
+	4) Lakukan di controller method destroy(), supaya author hanya bisa menghapus postnya saja.
+		
+		public function destroy(Post $post)
+    		{
+        		if (auth()->user()->is($post->author)) {
+            			$post->tags()->detach();
+            			$post->delete();
+
+            			session()->flash('success', 'The Post has been deleted');
+            			return redirect('post');
+        		} else {
+            			session()->flash('success', 'It was not your post');
+            			return redirect('post');
+        		}
+    		}
+
+34) LARAVEL POLICY DAN BASIC ROLE
+	1) Buat Policy : 	
+					// dia akan masuk di folder App/Policies
+		php artisan make:policy <NamaPolicy>			
+		php artisan make:policy <NamaPolicy> -m "<Model>"	// untuk mengintegrasikan policy dengan model
+
+	2) di Policy, buat satu function untuk policynya
+
+		public function update(User $user, Post $post)
+    		{
+        		return $user->id === $post->user_id;		// untuk ngecek
+    		}
+
+	3) Daftarkan methodnya ke service provider di folder App/Providers/AuthServiceProvider.php
+
+	4) di AuthServiceProvider, ubah :
+		protected $policies = [
+        		'App\Post' => 'App\Policies\PostPolicy',		// sesuaikan dengan Model dan Nama Policynya
+    		];
+
+	5) Untuk menggunakannya, pake @can
+		@can('update', $post)						// 'update' diambil dari nama method, $post merupakan parameter
+                        <a href="{{url('/posts/'.$post->slug.'/edit')}}" class="btn btn-warning rounded-pill">
+                            Edit
+                        </a>
+                @endcan
+		
+	6) Untuk menggunakan policy di Controller :
+		$this->authorize('update', $post);
+
+	7) Untul pengecualian (admin) :
+		1. masuk ke model User
+		2. buat function baru
+			public function isAdmin()
+   			{
+        			return $this->username == "muhammaaddsafii";
+    			}
+		3. masuk ke : App/Providers/AuthServiceProvider.php
+			public function boot()
+    			{
+       				$this->registerPolicies();
+
+        			Gate::before(function ($user) {
+            			return $user->isAdmin() ? true : null;
+        			});
+    			}
+			
+		
+		
