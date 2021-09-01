@@ -31,7 +31,9 @@
         @forelse ($posts as $post)
         <div class="col-md-7 mt-3 mb-3">
             <div class="card h-100">
-                <a href="{{url('/post/'.$post->slug)}}"><img class="card-img-top" src="{{ $post->takeImage }}" alt=""></a>
+                <a href="{{url('/post/'.$post->slug)}}">
+                    <img class="card-img-top" src="{{ $post->takeImage }}" alt="">
+                </a>
                 <div class="card-body">
                     <a class="text-decoration-none text-dark" href="{{url('/post/'.$post->slug)}}">
                         <h4>
