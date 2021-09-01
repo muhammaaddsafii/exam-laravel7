@@ -129,13 +129,12 @@ class PostController extends Controller
 
         if (request()->file('thumbnail')) {
             \Storage::delete($post->thumbnail);
-            $thumbnail = request()->file('thumbnail');
-            $thumbnailUrl = $thumbnail->store("images/photos");
+            $thumbnail = request()->file('thumbnail')->store("images/photos");
         } else {
-            $post->thumbnail;
+            $thumbnail = $post->thumbnail;
         }
 
-        $attr['thumbnail'] = $thumbnailUrl;
+        $attr['thumbnail'] = $thumbnail;
 
         $att['category_id'] = request('category');
         $post->tags()->sync(request('tags'));

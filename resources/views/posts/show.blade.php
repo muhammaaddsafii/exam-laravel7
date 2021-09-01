@@ -24,20 +24,21 @@
                         </div>
                     </div>
                     <hr>
-                    {{$posts->body}}
+                    {!!nl2br ($posts->body) !!}
                 </div>
                 <div class="card-footer d-flex justify-content-between">
                     Published on  {{$posts->created_at->diffForHumans()}}
-
-                    <div>
-                        Author : {{$posts->author->name}}
-                    </div>
                     <!-- Button trigger modal -->
-                    @can('delete', $posts)
+                    <div>
+                        @can('update', $posts)
+                            <a class="btn btn-warning rounded-pill" href="{{url('/post/'.$posts->slug.'/edit')}}">Edit</a>
+                        @endcan
+                        @can('delete', $posts)
                         <button type="button" class="btn btn-danger rounded-pill" data-bs-toggle="modal" data-bs-target="#myModal">
                             Delete
                         </button>
-                    @endcan                 
+                        @endcan
+                    </div>       
                     <!-- Modal -->
                     <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
