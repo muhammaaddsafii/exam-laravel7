@@ -19,7 +19,7 @@ class PostController extends Controller
 
     public function index()
     {
-        $posts = Post::with('author', 'tags', 'category')->latest()->Paginate(6);
+        $posts = Post::latest()->Paginate(6);
         return view('posts/index', ['posts' => $posts]);
     }
 
@@ -84,7 +84,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        $posts = Post::with('author', 'tags', 'category')->where('category_id', $post->category_id)->latest()->limit(6)->get();
+        $posts = Post::where('category_id', $post->category_id)->latest()->limit(6)->get();
         return view('posts/show', ['posts' => $post, 'post' => $posts]);
     }
 

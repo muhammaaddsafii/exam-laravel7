@@ -62,6 +62,10 @@
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
+                        <form class="d-flex" action="/posts/search" method="GET">
+                            <input name="query" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                            <button class="btn btn-outline-success rounded-pill mr-2" type="submit">Search</button>
+                          </form>
                         <!-- Authentication Links -->
                         @guest
                             <li class="nav-item">

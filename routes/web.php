@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
+
+Route::get('/posts/search', 'SearchController@post');
 Route::get('/all-post', 'PostController@index')->name('post');
 
 Route::middleware('auth')->group(function () {
