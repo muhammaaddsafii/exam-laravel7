@@ -11,7 +11,7 @@ class SearchController extends Controller
     {
         $query = request('query');
 
-        $posts = Post::where("title", "like", "%$query%")->latest()->paginate(6);
+        $posts = Post::where("title", "like", "%$query%")->orwhere("body", "like", "%$query%")->latest()->paginate(6);
         return view('posts/index', ["posts" => $posts]);
     }
 }

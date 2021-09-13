@@ -487,5 +487,192 @@ href="{{url('/post/'.$post->slug)}}"
         			});
     			}
 			
+35) BERI IMAGE DI LARAVEL
+	1) Buat input untuk upload image
+		<div class="form-group">
+			<input type="file" name="thumbnail" id="thumbnail">
+                </div>
+
+	2) Tambahkan enctype="multipart/form-data" di formnya, supaya inputannya bisa dibaca oleh server
+		<form action="{{url('/posts/store')}}" method="POST" enctype="multipart/form-data">
+
+	3) di Controller method store, tambahkan :
+		$thumbnail = request()->file('thumbnail');		// ini untuk ambil image yang diupload
 		
 		
+	4) Lakukan configurasi dengan masuk ke folder config/filesystems.php :
+		- copy FILESYSTEM_DRIVER
+		- paste di .env (paling bawah) :
+			 FILESYSTEM_DRIVER = public			// ini untuk ngasih tau laravel bahwa kita memakai storage yang public
+	
+	5) Panggil variable $thumbnail di poin nomer 3, caranya :
+		$thumbnail->storeAs("images/photos", "{$slug}.{$thumbnail->extension()}");
+		
+	   DI CONTROLLERNYA, JADINYA SEPERTI INI :
+		$attr = $request->all();
+        	$slug = Str::slug($request->title);
+        	$attr['slug'] = $slug;
+
+        	$thumbnail = request()->file('$thumbnail');
+        	$thumbnailUrl = $thumbnail->storeAs("images/photos", "{$slug}.{$thumbnail->extension()}");
+
+        	$attr['category_id'] = request('category');     //untuk menyisipkan category
+        	$attr['thumbnail'] = $thumbnailUrl;
+	
+	6) Jangan lupa fillable 
+
+	HARUSNYA DIA SUDAH TERSIMPAN DI DATABASE. Untuk melihat, masuk ke folder storage/app/public/images/photos
+
+	UNTUK MENAMPILKAN IMAGENYA :
+	7) buat simbolic link, supaya folder storage bisa masuk ke public.
+		php artisan storage:link
+	
+	8) panggil imagenya di blade :
+		<img class="card-img-top" src="{{ asset("storage/".$post->thumbnail) }}" alt="">
+		
+	*** CATATAN : CARA PANGGIL IMAGENYA BISA MEMAKAI BEBERAPA CARA ***
+	a. cara pertama, panggil pakai fungsi :
+		<img class="card-img-top" src="{{ asset($post->takeImage()) }}" alt="">
+	   
+	   kemudian buat fungsi di modelnya :
+		public function takeImage()
+    		{
+        		return "storage/" . $this->thumbnail;
+    		}
+ 
+	b. cara kedua, panggil sebagai atribut :
+		<img class="card-img-top" src="{{ asset($post->takeImage) }}" alt="">
+	
+	   kemudian buat fungsi di modelnya :
+		public function getTakeImageAttribute()
+    		{
+        		return "storage/" . $this->thumbnail;
+    		}
+	
+	c. cara lebih singkat :
+		<img class="card-img-top" src="{{ $post->takeImage }}" alt="">
+
+	   kemudian buat fungsi di modelnya :
+		public function getTakeImageAttribute()
+    		{
+        		return "/storage/" . $this->thumbnail;			// cuman ditambahi prefix biar bisa diakses dimana saja 
+    		}
+
+	d. cara satu lagi :
+		<img class="card-img-top" src="{{ $post->takeImage }}" alt="">
+
+	   kemudian buat fungsi di modelnya :
+		public function getTakeImageAttribute()
+    		{
+        		return "/storage/" . $this->thumbnail;			// cuman ditambahi prefix biar bisa diakses dimana saja 
+    		}
+
+	   di controllernya jadi lebih singkat :
+		$thumbnailUrl = $thumbnail->storeAs("images/photos", "{$slug}.{$thumbnail->extension()}");
+
+		jadi seperti ini :
+		$thumbnailUrl = $thumbnail->store("images/photos");		// hilangkan As-nya
+	
+	***** UNTUK MELAKUKAN DI UPDATE, KONSEPNYA SAMA *****
+	
+	a. supaya ketika diupdate, image lamanya hilang, tambah if-else di Controllernya
+		if (request()->file('thumbnail')) {
+            		\Storage::delete($posts->thumbnail);
+            		$thumbnail = request()->file('thumbnail');
+            		$thumbnailUrl = $thumbnail->store("images/photos");
+       		} else {
+            		$posts->thumbnail;
+        	}
+	
+	b. supaya ketika hapus post, image ikut kedelete, tambah (di method destroy):
+		\Storage::delete($posts->thumbnail);
+
+	***** UNTUK VALIDASI IMAGE *****
+	
+	a. letakkan di method store, untuk validasi image :
+		
+		$request->validate([
+            	'thumbnail' => 'image | mimes:jpeg, png, jpg, svg| max:2048'
+        	]);
+	
+	b. validasi untuk image, ketika image kosong :
+
+		$thumbnail = request()->file('thumbnail') ? request()->file('thumbnail')->store("images/photos") : null;
+
+36) DESAIN ULANG POST
+	1) Pake gravatar
+		Buat fungsi (di model:User) :
+		public function gravatar($size = 150)
+    		{
+        		return "https://www.gravatar.com/avatar/" . md5(strtolower(trim($this->email))) . "?d=mp&s=" . $size;
+    		}
+
+	2) Panggil Gravatar
+	
+
+37) LARAVEL EAGER LOADING
+	problem : end-post-one-problem (terjadi duplikasi query)
+	--> untuk cek bisa pakai Laravel telescope/debugbar
+
+	solusi :
+	PAKAI EAGER LOADING, dengan cara tambahi with()
+
+	public function index()
+    	{
+        	$posts = Post::with('author', 'tags', 'category')->latest()->Paginate(6);
+        	return view('posts/index', ['posts' => $posts]);
+    	}
+	
+	// 'author', 'tags', 'category' bisa dilihat di modelnya
+
+38) NGASIH KONDISI DAN LIMIT
+	public function show(Post $post)
+    	{
+        	$posts = Post::where('category_id', $post->category_id)->latest()->limit(6)->get();
+        	return view('posts/show', ['posts' => $post, 'post' => $posts]);
+    	}
+	
+39) REFACTORING AND SEARCHING
+	1) Buat search formnya (search engine)
+		<form class="d-flex" action="/posts/search" method="GET">
+                      <input name="query" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                      <button class="btn btn-outline-success rounded-pill mr-2" type="submit">Search</button>
+                </form>
+
+	// yang penting action, method, dan name.
+
+	2) Buat route untuk seacrh engine nya
+		Route::get('/posts/search', 'SearchController@post');
+	
+	3) Buat Controllernya
+	
+	4) Buat function di controllernya :
+		public function post()
+    		{
+        		$query = request('query');
+
+        		$posts = Post::where("title", "like", "%$query%")->latest()->paginate(6);
+        		return view('posts/index', ["posts" => $posts]);
+    		}
+
+40) MEMBUAT EAGER LOADING (with()) TIDAK BERULANG
+	Tambah di Model :
+	protected $with = ['author', 'category', 'tag']; 
+
+41) VENDOR LARAVEL (vendor:paket yang diberikan oleh laravel)
+	php artisan vendor:publish
+
+	* untuk akses pagination dari vendor :
+
+	<div class="d-flex justify-content-center mt-3">
+    		{{ $posts->links('pagination::simple-tailwind') }}
+	</div>
+
+	* untuk menetapkan pagination di semua halaman :
+	masuk ke App/Providers/AppServiceProvider.php
+	
+	public function boot()
+    	{
+        	Paginator::defaultView('pagination::simple-tailwind');
+    	}
+	
